@@ -19,19 +19,24 @@
 #include "Arduino.h"
 #include "ScifiDisplayBoard.h"
 
-ScifiDisplayBoard::ScifiDisplayBoard(byte data_pin, byte clock_pin, byte strobe_pin)
-    : board_(data_pin, clock_pin, strobe_pin) {
+ScifiDisplayBoard::ScifiDisplayBoard(int data_pin, int clock_pin, int strobe_pin)
+    : board_((byte)data_pin, (byte)clock_pin, (byte)strobe_pin) {
+  board_.clearDisplay();
+
+  reported_buttons_ = 0u;
+
   for(int i = 0; i < NUM_DIGITS; ++i)
     messages_[i][0] = '\0';
   message_state_ = -1;
+
 }
 
-static inline bool message_ok(int message) {
-  return (message >= 0 && message < ScifiDisplayBoard::NUM_DIGITS);
+static inline bool message_index_ok(int index) {
+  return (index >= 0 && index < ScifiDisplayBoard::NUM_DIGITS);
 }
 
-void ScifiDisplayBoard::set_message(int message, const char* text) {
-  if(!message_ok(message))
+void ScifiDisplayBoard::set_message(int index, const char* text) {
+  if(!message_index_ok(index))
     return;
 
   int len;
@@ -40,23 +45,32 @@ void ScifiDisplayBoard::set_message(int message, const char* text) {
   int padding = (NUM_DIGITS - len) >> 1;
 
   for(int i = 0; i < padding; ++i)
-    messages_[message][i] = ' ';
+    messages_[index][i] = ' ';
   for(int i = 0; i < len; ++i)
-    messages_[message][i + padding] = text[i];
-  messages_[message][len + padding] = '\0';
+    messages_[index][i + padding] = text[i];
+  messages_[index][len + padding] = '\0';
 }
 
-void ScifiDisplayBoard::blink_message(int message, unsigned int current_millis) {
-  if(!message_ok(message))
+int ScifiDisplayBoard::get_message_index() {
+  return (message_state_ < 0 ? -1 : message_index_);
+}
+
+void ScifiDisplayBoard::blink_message(int index, unsigned int current_millis) {
+  if(!message_index_ok(index))
     return;
 
-  message_ = message;
+  message_index_ = index;
   message_state_ = 0;
   message_state_change_millis_ = current_millis;
   board_.clearDisplay();
 }
 
-byte ScifiDisplayBoard::update(unsigned int current_millis) {
+void ScifiDisplayBoard::disable_message() {
+  message_state_ = -1;
+  board_.clearDisplay();
+}
+
+unsigned int ScifiDisplayBoard::update(unsigned int current_millis) {
   static const unsigned int MESSAGE_STATE_DURATION[2] = {
     200u, 400u,
   };
@@ -67,10 +81,17 @@ byte ScifiDisplayBoard::update(unsigned int current_millis) {
     message_state_ = !message_state_;
 
     if(message_state_)
-      board_.setDisplayToString(messages_[message_]);
+      board_.setDisplayToString(messages_[message_index_]);
     else
       board_.clearDisplay();
   }
 
-  return board_.getButtons();
+  return get_button_presses();
+}
+
+unsigned int ScifiDisplayBoard::get_button_presses() {
+  unsigned int buttons = (unsigned int)board_.getButtons();
+  unsigned int new_buttons = buttons & ~reported_buttons_;
+  reported_buttons_ = buttons;
+  return new_buttons;
 }

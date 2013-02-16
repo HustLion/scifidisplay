@@ -32,11 +32,14 @@ void setup() {
 
 void loop() {
   unsigned int current_millis = (unsigned int)millis();
-  byte buttons = board.update(current_millis);
+  unsigned int buttons = board.update(current_millis);
   if(buttons != 0) {
-    for(int i = 0; i < 8; ++i) {
+    for(int i = 0; i < ScifiDisplayBoard::NUM_DIGITS; ++i) {
       if((buttons & (1 << i)) != 0) {
-        board.blink_message(i, current_millis);
+        if(i == board.get_message_index())
+          board.disable_message();
+        else
+          board.blink_message(i, current_millis);
         break;
       }
     }

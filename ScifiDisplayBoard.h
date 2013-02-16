@@ -25,17 +25,24 @@ class ScifiDisplayBoard {
   public:
     static const int NUM_DIGITS = 8;
 
-    ScifiDisplayBoard(byte data_pin, byte clock_pin, byte strobe_pin);
-    void set_message(int message, const char* text);
+    ScifiDisplayBoard(int data_pin, int clock_pin, int strobe_pin);
+    void set_message(int index, const char* text);
 
-    void blink_message(int message, unsigned int current_millis);
+    int get_message_index();
+    void blink_message(int index, unsigned int current_millis);
+    void disable_message();
 
-    byte update(unsigned int current_millis);
+    unsigned int update(unsigned int current_millis);
 
   private:
+    unsigned int get_button_presses();
+
     TM1638 board_;
+
+    unsigned int reported_buttons_;
+
     char messages_[NUM_DIGITS][NUM_DIGITS + 1];
-    int message_;
+    int message_index_;
     int message_state_;
     unsigned int message_state_change_millis_;
 };
