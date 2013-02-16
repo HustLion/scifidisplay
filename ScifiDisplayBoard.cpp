@@ -56,11 +56,11 @@ void ScifiDisplayBoard::blink_message(int message, unsigned int current_millis) 
   board_.clearDisplay();
 }
 
-static const unsigned int MESSAGE_STATE_DURATION[2] = {
-  200u, 400u,
-};
-
 byte ScifiDisplayBoard::update(unsigned int current_millis) {
+  static const unsigned int MESSAGE_STATE_DURATION[2] = {
+    200u, 400u,
+  };
+
   if(message_state_ >= 0
   && current_millis - message_state_change_millis_ >= MESSAGE_STATE_DURATION[message_state_]) {
     message_state_change_millis_ += MESSAGE_STATE_DURATION[message_state_];
