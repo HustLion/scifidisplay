@@ -2,37 +2,43 @@
 
 static const char* messages[][ScifiDisplayBoard::NUM_DIGITS] = {
   {
-    "dANGEr",
+    "dAnGEr",
     "FAILUrE",
-    "CAUtION",
+    "CAUtIOn",
     "ErrOr",
-    "EvACUAtE",
+    "EuACUAtE",
     "COdE rEd",
     "dEStrOY",
-    "LEvEL 12",
+    "LEuEL 12",
   },
   {
-    "CONtAIN",
+    "CONtAIn",
     "brEACH",
     "dEAtH",
     "dEAdbEEF",
-    "rUN",
+    "rUn",
     "bIOLAb",
     "SHOOt",
     "tHrEAt",
   }
 };
 
-
 ScifiDisplayBoard board(8, 7, 6);
 
 void setup() {
   for(int i = 0; i < ScifiDisplayBoard::NUM_DIGITS; ++i)
     board.set_message(i, messages[0][i]);
-
-  board.blink_message(0, (unsigned int)millis());
 }
 
 void loop() {
-  board.update((unsigned int)millis());
+  unsigned int current_millis = (unsigned int)millis();
+  byte buttons = board.update(current_millis);
+  if(buttons != 0) {
+    for(int i = 0; i < 8; ++i) {
+      if((buttons & (1 << i)) != 0) {
+        board.blink_message(i, current_millis);
+        break;
+      }
+    }
+  }
 }

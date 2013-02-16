@@ -30,7 +30,7 @@ class ScifiDisplayBoard {
 
     void blink_message(int message, unsigned int current_millis);
 
-    void update(unsigned int current_millis);
+    byte update(unsigned int current_millis);
 
   private:
     TM1638 board_;
