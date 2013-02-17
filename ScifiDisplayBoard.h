@@ -34,7 +34,7 @@ class ScifiDisplayBoard {
     void disable_message();
 
     void blink_leds(bool green, unsigned int current_millis);
-    // TODO: flash_leds()
+    void flash_leds(bool green, unsigned int current_millis);
     void disable_leds();
 
     unsigned int update(unsigned int current_millis);

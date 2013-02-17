@@ -20,6 +20,11 @@
 #include "ScifiDisplayBoard.h"
 #include <stdlib.h> // For random().
 
+// These would be the TM1638_COLOR_* constants in TM1638.h, but they're defined
+// backwards there so I use the correct numerical values here instead.
+static const int COLOR_GREEN = 1;
+static const int COLOR_RED = 2;
+
 ScifiDisplayBoard::ScifiDisplayBoard(int data_pin, int clock_pin, int strobe_pin)
     : board_((byte)data_pin, (byte)clock_pin, (byte)strobe_pin) {
   reported_buttons_ = 0u;
@@ -77,14 +82,21 @@ void ScifiDisplayBoard::disable_message() {
 
 void ScifiDisplayBoard::blink_leds(bool green, unsigned int current_millis) {
   leds_value_ = (unsigned int)(random() & 0xff);
-  // These would be the TM1638_COLOR_* constants in TM1638.h, but they're
-  // defined backwards so I use the correct numerical value instead.
-  leds_color_ = (green ? 1 : 2);
+  leds_color_ = (green ? COLOR_GREEN : COLOR_RED);
   leds_state_ = 2;
   leds_state_change_millis_ = current_millis;
 
   for(int i = 0; i < NUM_DIGITS; ++i)
     update_led(i);
+}
+
+void ScifiDisplayBoard::flash_leds(bool green, unsigned int current_millis) {
+  leds_value_ = 0u;
+  leds_color_ = (green ? COLOR_GREEN : COLOR_RED);
+  leds_state_ = 0;
+  leds_state_change_millis_ = current_millis;
+
+  board_.setLEDs((word)0);
 }
 
 void ScifiDisplayBoard::disable_leds() {
@@ -98,8 +110,8 @@ unsigned int ScifiDisplayBoard::update(unsigned int current_millis) {
     200u, 400u,
   };
   static const unsigned int LEDS_STATE_DURATION[3] = {
-    0u, 0u,
-    500u,
+    100u, 200u,
+    300u,
   };
 
   if(message_state_ >= 0
@@ -125,7 +137,11 @@ unsigned int ScifiDisplayBoard::update(unsigned int current_millis) {
     }
     else {
       leds_state_ = !leds_state_;
-      // TODO: flash LEDs
+
+      if(leds_state_)
+        board_.setLEDs(leds_color_ == COLOR_GREEN ? (word)0xff : (word)0xff00);
+      else
+        board_.setLEDs(0);
     }
   }
 
