@@ -26,8 +26,8 @@ class ScifiDisplayBoard {
     static const int NUM_DIGITS = 8;
 
     ScifiDisplayBoard(int data_pin, int clock_pin, int strobe_pin);
+    void set_brightness(int brightness); // [0,8], 0 = off.
     void set_message(int index, const char* text);
-    // TODO: set brightness
 
     int get_message_index();
     void blink_message(int index, unsigned int current_millis);

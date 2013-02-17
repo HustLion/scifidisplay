@@ -39,6 +39,10 @@ ScifiDisplayBoard::ScifiDisplayBoard(int data_pin, int clock_pin, int strobe_pin
   board_.setLEDs((word)0);
 }
 
+void ScifiDisplayBoard::set_brightness(int brightness) {
+  board_.setupDisplay(brightness > 0, (byte)(brightness - 1));
+}
+
 static inline bool message_index_ok(int index) {
   return (index >= 0 && index < ScifiDisplayBoard::NUM_DIGITS);
 }
