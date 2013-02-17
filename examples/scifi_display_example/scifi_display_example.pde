@@ -28,6 +28,7 @@ ScifiDisplayBoard board(8, 7, 6);
 void setup() {
   for(int i = 0; i < ScifiDisplayBoard::NUM_DIGITS; ++i)
     board.set_message(i, messages[0][i]);
+  board.blink_leds(false, (unsigned int)millis());
 }
 
 void loop() {

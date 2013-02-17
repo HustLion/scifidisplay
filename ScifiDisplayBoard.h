@@ -27,14 +27,20 @@ class ScifiDisplayBoard {
 
     ScifiDisplayBoard(int data_pin, int clock_pin, int strobe_pin);
     void set_message(int index, const char* text);
+    // TODO: set brightness
 
     int get_message_index();
     void blink_message(int index, unsigned int current_millis);
     void disable_message();
 
+    void blink_leds(bool green, unsigned int current_millis);
+    // TODO: flash_leds()
+    void disable_leds();
+
     unsigned int update(unsigned int current_millis);
 
   private:
+    void update_led(int index);
     unsigned int get_button_presses();
 
     TM1638 board_;
@@ -45,6 +51,11 @@ class ScifiDisplayBoard {
     int message_index_;
     int message_state_;
     unsigned int message_state_change_millis_;
+
+    unsigned int leds_value_;
+    int leds_color_;
+    int leds_state_;
+    unsigned int leds_state_change_millis_;
 };
 
 #endif

@@ -18,17 +18,20 @@
 
 #include "Arduino.h"
 #include "ScifiDisplayBoard.h"
+#include <stdlib.h> // For random().
 
 ScifiDisplayBoard::ScifiDisplayBoard(int data_pin, int clock_pin, int strobe_pin)
     : board_((byte)data_pin, (byte)clock_pin, (byte)strobe_pin) {
-  board_.clearDisplay();
-
   reported_buttons_ = 0u;
 
   for(int i = 0; i < NUM_DIGITS; ++i)
     messages_[i][0] = '\0';
   message_state_ = -1;
 
+  leds_state_ = -1;
+
+  board_.clearDisplay();
+  board_.setLEDs((word)0);
 }
 
 static inline bool message_index_ok(int index) {
@@ -62,17 +65,41 @@ void ScifiDisplayBoard::blink_message(int index, unsigned int current_millis) {
   message_index_ = index;
   message_state_ = 0;
   message_state_change_millis_ = current_millis;
+
   board_.clearDisplay();
 }
 
 void ScifiDisplayBoard::disable_message() {
   message_state_ = -1;
+
   board_.clearDisplay();
+}
+
+void ScifiDisplayBoard::blink_leds(bool green, unsigned int current_millis) {
+  leds_value_ = (unsigned int)(random() & 0xff);
+  // These would be the TM1638_COLOR_* constants in TM1638.h, but they're
+  // defined backwards so I use the correct numerical value instead.
+  leds_color_ = (green ? 1 : 2);
+  leds_state_ = 2;
+  leds_state_change_millis_ = current_millis;
+
+  for(int i = 0; i < NUM_DIGITS; ++i)
+    update_led(i);
+}
+
+void ScifiDisplayBoard::disable_leds() {
+  leds_state_ = -1;
+
+  board_.setLEDs((word)0);
 }
 
 unsigned int ScifiDisplayBoard::update(unsigned int current_millis) {
   static const unsigned int MESSAGE_STATE_DURATION[2] = {
     200u, 400u,
+  };
+  static const unsigned int LEDS_STATE_DURATION[3] = {
+    0u, 0u,
+    500u,
   };
 
   if(message_state_ >= 0
@@ -86,7 +113,30 @@ unsigned int ScifiDisplayBoard::update(unsigned int current_millis) {
       board_.clearDisplay();
   }
 
+  if(leds_state_ >= 0
+  && current_millis - leds_state_change_millis_ >= LEDS_STATE_DURATION[leds_state_]) {
+    leds_state_change_millis_ += LEDS_STATE_DURATION[leds_state_];
+
+    if(leds_state_ == 2) {
+      int flip = (int)(random() & (NUM_DIGITS - 1));
+      leds_value_ ^= (1 << (unsigned int)flip);
+
+      update_led(flip);
+    }
+    else {
+      leds_state_ = !leds_state_;
+      // TODO: flash LEDs
+    }
+  }
+
   return get_button_presses();
+}
+
+void ScifiDisplayBoard::update_led(int index) {
+  board_.setLED(
+    ((leds_value_ & (1 << (unsigned int)index)) ? (byte)leds_color_ : 0),
+    (byte)index
+  );
 }
 
 unsigned int ScifiDisplayBoard::get_button_presses() {
