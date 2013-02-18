@@ -1,6 +1,9 @@
-#include "ScifiDisplayBoard.h"
+#include "ScifiDisplay.h"
+#include "TM1638.h" // Needed because of shortcomings in the Arduino IDE.
 
-static const char* messages[][ScifiDisplayBoard::NUM_DIGITS] = {
+static const int NUM_BOARDS = 2;
+
+static const char* messages[NUM_BOARDS][ScifiDisplayBoard::NUM_DIGITS] = {
   {
     "dAnGEr",
     "FAILUrE",
@@ -15,7 +18,7 @@ static const char* messages[][ScifiDisplayBoard::NUM_DIGITS] = {
     "CONtAIn",
     "brEACH",
     "dEAtH",
-    "dEAdbEEF",
+    "/w{K!m_#",
     "rUn",
     "bIOLAb",
     "SHOOt",
@@ -23,26 +26,16 @@ static const char* messages[][ScifiDisplayBoard::NUM_DIGITS] = {
   }
 };
 
-ScifiDisplayBoard board(8, 7, 6);
+ScifiDisplay<NUM_BOARDS> display(8, 7, 6, 5);
 
 void setup() {
-  for(int i = 0; i < ScifiDisplayBoard::NUM_DIGITS; ++i)
-    board.set_message(i, messages[0][i]);
-  board.blink_leds(false, (unsigned int)millis());
+  for(int i = 0; i < NUM_BOARDS; ++i) {
+    for(int m = 0; m < ScifiDisplayBoard::NUM_DIGITS; ++m)
+      display.set_message(i, m, messages[i][m]);
+    display.blink_leds(i, false, (unsigned int)millis());
+  }
 }
 
 void loop() {
-  unsigned int current_millis = (unsigned int)millis();
-  unsigned int buttons = board.update(current_millis);
-  if(buttons != 0) {
-    for(int i = 0; i < ScifiDisplayBoard::NUM_DIGITS; ++i) {
-      if((buttons & (1 << i)) != 0) {
-        if(i == board.get_message_index())
-          board.disable_message();
-        else
-          board.flash_message(i, current_millis);
-        break;
-      }
-    }
-  }
+  display.update((unsigned int)millis());
 }
