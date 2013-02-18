@@ -40,7 +40,7 @@ void loop() {
         if(i == board.get_message_index())
           board.disable_message();
         else
-          board.blink_message(i, current_millis);
+          board.flash_message(i, current_millis);
         break;
       }
     }

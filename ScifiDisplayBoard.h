@@ -21,22 +21,75 @@
 
 #include <TM1638.h>
 
+/**
+ * An individual TM1638 display board.  We store 8 messages that can be flashed
+ * on the display, and the LEDs can be set to flash or blink randomly.  We
+ * report new button presses (not the current button state).
+ */
 class ScifiDisplayBoard {
   public:
+    /// Number of buttons, LEDs, and digits on the board.
     static const int NUM_DIGITS = 8;
 
+    /**
+     * Parameters are passed to the TM1638 constructor; see it.
+     */
     ScifiDisplayBoard(int data_pin, int clock_pin, int strobe_pin);
-    void set_brightness(int brightness); // [0,8], 0 = off.
+
+    /**
+     * Set the board's brightness, in the range [0,8].  If you pass 0, the
+     * board's lights will be turned off; 8 is maximum brightness.
+     */
+    void set_brightness(int brightness);
+
+    /**
+     * Set the text of the message at the given index, which must be in the
+     * range [0,NUM_DIGITS).
+     */
     void set_message(int index, const char* text);
 
+    /**
+     * Return the currently displayed message index, or -1 if the message is
+     * disabled.
+     */
     int get_message_index();
-    void blink_message(int index, unsigned int current_millis);
+
+    /**
+     * Flash the message at the given index on the display.  index must be in
+     * the range [0,NUM_DIGITS); the text at that index is defined with
+     * set_message().  current_millis is the value of millis() typecast to
+     * unsigned int.
+     */
+    void flash_message(int index, unsigned int current_millis);
+
+    /**
+     * Disables the message display.
+     */
     void disable_message();
 
+    /**
+     * Randomly blink the LEDs, red if green is false.  current_millis is the
+     * value of millis() typecast to unsigned int.
+     */
     void blink_leds(bool green, unsigned int current_millis);
+
+    /**
+     * Flash the LEDs, red if green is false.  current_millis is the value of
+     * millis() typecast to unsigned int.
+     */
     void flash_leds(bool green, unsigned int current_millis);
+
+    /**
+     * Disables the LEDs.
+     */
     void disable_leds();
 
+    /**
+     * Update the state of the board.  current_millis is the value of millis()
+     * typecast to unsigned int.  Return button presses: if the LSB (bit 0) is
+     * set, the first button was pressed; if bit 1 is set, the second button;
+     * etc.  Must be called often inside loop().
+     */
     unsigned int update(unsigned int current_millis);
 
   private:

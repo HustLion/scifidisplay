@@ -67,7 +67,7 @@ int ScifiDisplayBoard::get_message_index() {
   return (message_state_ < 0 ? -1 : message_index_);
 }
 
-void ScifiDisplayBoard::blink_message(int index, unsigned int current_millis) {
+void ScifiDisplayBoard::flash_message(int index, unsigned int current_millis) {
   if(!message_index_ok(index))
     return;
 
