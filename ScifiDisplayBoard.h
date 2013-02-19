@@ -55,7 +55,7 @@ class ScifiDisplayBoard {
     const char* get_message(int index);
 
     /**
-     * Return the currently displayed message index, or -1 if the message is
+     * Return the currently flashing message index, or -1 if the message is
      * disabled.
      */
     int get_message_index();
@@ -72,6 +72,12 @@ class ScifiDisplayBoard {
      * Disables the message display.
      */
     void disable_message();
+
+    /**
+     * Return whether the LEDs are blinking or flashing, false if disabled.  If
+     * blinking_out is non-NULL, fill it with true if blinking, else false.
+     */
+    bool get_leds_state(bool* blinking_out);
 
     /**
      * Randomly blink the LEDs, red if green is false.  current_millis is the

@@ -91,6 +91,12 @@ void ScifiDisplayBoard::disable_message() {
   board_.clearDisplay();
 }
 
+bool ScifiDisplayBoard::get_leds_state(bool* blinking_out) {
+  if(blinking_out)
+    *blinking_out = (leds_state_ == 2);
+  return (leds_state_ >= 0);
+}
+
 void ScifiDisplayBoard::blink_leds(bool green, unsigned int current_millis) {
   leds_value_ = (unsigned int)(random() & 0xff);
   leds_color_ = (green ? COLOR_GREEN : COLOR_RED);
