@@ -5,9 +5,9 @@ static const int NUM_BOARDS = 2;
 
 static const char* messages[NUM_BOARDS][ScifiDisplayBoard::NUM_DIGITS] = {
   {
-    "dAnGEr",
+    "dANGEr",
     "FAILUrE",
-    "CAUtIOn",
+    "CAUtION",
     "ErrOr",
     "EuACUAtE",
     "COdE rEd",
@@ -15,11 +15,11 @@ static const char* messages[NUM_BOARDS][ScifiDisplayBoard::NUM_DIGITS] = {
     "LEuEL 12",
   },
   {
-    "CONtAIn",
+    "CONtAIN",
     "brEACH",
     "dEAtH",
     "/w{K!m_#",
-    "rUn",
+    "rUN",
     "bIOLAb",
     "SHOOt",
     "tHrEAt",
