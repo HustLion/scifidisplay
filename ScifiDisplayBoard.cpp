@@ -63,14 +63,14 @@ void ScifiDisplayBoard::set_message(int index, const char* text) {
   messages_[index][len + padding] = '\0';
 }
 
-const char* ScifiDisplayBoard::get_message(int index) {
+const char* ScifiDisplayBoard::get_message(int index) const {
   if(!message_index_ok(index))
     return 0;
 
   return messages_[index];
 }
 
-int ScifiDisplayBoard::get_message_index() {
+int ScifiDisplayBoard::get_message_index() const {
   return (message_state_ < 0 ? -1 : message_index_);
 }
 
@@ -91,7 +91,7 @@ void ScifiDisplayBoard::disable_message() {
   board_.clearDisplay();
 }
 
-bool ScifiDisplayBoard::get_leds_state(bool* blinking_out) {
+bool ScifiDisplayBoard::get_leds_state(bool* blinking_out) const {
   if(blinking_out)
     *blinking_out = (leds_state_ == 2);
   return (leds_state_ >= 0);
