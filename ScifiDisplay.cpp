@@ -29,39 +29,61 @@ ScifiDisplayBase::ScifiDisplayBase(int num_boards, ScifiDisplayBoard* board0,
   boards_[3] = board3;
 }
 
-void ScifiDisplayBase::set_brightness(int brightness) {
-  for(int i = 0; i < num_boards_; ++i)
-    boards_[i]->set_brightness(brightness);
+ScifiDisplayBoard* ScifiDisplayBase::get_board(int board) const {
+  if(!board_ok(board))
+    return 0;
+  return boards_[board];
 }
 
-void ScifiDisplayBase::set_message(int board, int index, const char* text) {
-  if(board_ok(board))
-    boards_[board]->set_message(index, text);
+static inline const char* next_word(const char* string) {
+  while(*string && *string != ' ')
+    ++string;
+  while(*string == ' ')
+    ++string;
+  return string;
 }
 
-void ScifiDisplayBase::flash_message(int board, int index, unsigned int current_millis) {
-  if(board_ok(board))
-    boards_[board]->flash_message(index, current_millis);
-}
+bool ScifiDisplayBase::process_command(const char* command, char* response, unsigned int current_millis) {
+  static const unsigned int PROTOCOL_VERSION = 0x0001; // 0.1
 
-void ScifiDisplayBase::disable_message(int board) {
-  if(board_ok(board))
-    boards_[board]->disable_message();
-}
+  static const int MAX_ARGS = 4;
+  const char* argv[MAX_ARGS];
+  argv[0] = command;
+  for(int i = 1; i < MAX_ARGS; ++i)
+    argv[i] = next_word(argv[i - 1]);
 
-void ScifiDisplayBase::blink_leds(int board, bool green, unsigned int current_millis) {
-  if(board_ok(board))
-    boards_[board]->blink_leds(green, current_millis);
-}
+  switch(*argv[0]) {
+    case 'h': case 'H': // help
+      snprintf(response, COMMAND_RESPONSE_SIZE,
+"ScifiDisplay v%u.%u\n" // printf args 1 and 2
+"Commands (BOARD is 1-num attached boards, or a[ll]):\n"
+"h[elp] - print this help\n"
+"i[nfo] - print info\n"
+"b[rightness] BOARD 0-8 - set brightness (0 = off; 8 = max)\n",
+(PROTOCOL_VERSION >> 8) & 0xff, PROTOCOL_VERSION & 0xff);
+      return true;
 
-void ScifiDisplayBase::flash_leds(int board, bool green, unsigned int current_millis) {
-  if(board_ok(board))
-    boards_[board]->flash_leds(green, current_millis);
-}
+    case 'i': case 'I': // info
+      snprintf(response, COMMAND_RESPONSE_SIZE,
+"num_boards: %d\n",
+num_boards_
+);
+      return true;
 
-void ScifiDisplayBase::disable_leds(int board) {
-  if(board_ok(board))
-    boards_[board]->disable_leds();
+    case 'b': case 'B': // brightness
+      int board = atoi(argv[1]);
+      int brightness = atoi(argv[2]);
+      if(*argv[1] == 'a' || *argv[1] == 'A') {
+        for(int i = 0; i < num_boards_; ++i)
+          boards_[i]->set_brightness(brightness);
+      }
+      else
+        boards_[board]->set_brightness(brightness);
+      snprintf(response, COMMAND_RESPONSE_SIZE, "ok");
+      return true;
+  }
+
+  return false;
 }
 
 void ScifiDisplayBase::update(unsigned int current_millis) {
@@ -81,6 +103,6 @@ void ScifiDisplayBase::update(unsigned int current_millis) {
   }
 }
 
-bool ScifiDisplayBase::board_ok(int board) {
+bool ScifiDisplayBase::board_ok(int board) const {
   return (board >= 0 && board < num_boards_);
 }

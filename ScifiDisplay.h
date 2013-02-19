@@ -29,21 +29,16 @@ class ScifiDisplayBase {
 
   public:
     static const int MAX_BOARDS = 4;
+    static const int COMMAND_RESPONSE_SIZE = 128;
 
-    void set_brightness(int brightness);
-    void set_message(int board, int index, const char* text);
+    ScifiDisplayBoard* get_board(int board) const;
 
-    void flash_message(int board, int index, unsigned int current_millis);
-    void disable_message(int board);
-
-    void blink_leds(int board, bool green, unsigned int current_millis);
-    void flash_leds(int board, bool green, unsigned int current_millis);
-    void disable_leds(int board);
+    bool process_command(const char* command, char* response, unsigned int current_millis);
 
     void update(unsigned int current_millis);
 
   private:
-    bool board_ok(int board);
+    bool board_ok(int board) const;
 
     int num_boards_;
     ScifiDisplayBoard* boards_[MAX_BOARDS];
