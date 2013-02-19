@@ -63,6 +63,13 @@ void ScifiDisplayBoard::set_message(int index, const char* text) {
   messages_[index][len + padding] = '\0';
 }
 
+const char* ScifiDisplayBoard::get_message(int index) {
+  if(!message_index_ok(index))
+    return 0;
+
+  return messages_[index];
+}
+
 int ScifiDisplayBoard::get_message_index() {
   return (message_state_ < 0 ? -1 : message_index_);
 }

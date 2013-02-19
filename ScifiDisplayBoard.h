@@ -49,6 +49,12 @@ class ScifiDisplayBoard {
     void set_message(int index, const char* text);
 
     /**
+     * Return the text of the message at the given index, or NULL if index not
+     * in the range [0,NUM_DIGITS).
+     */
+    const char* get_message(int index);
+
+    /**
      * Return the currently displayed message index, or -1 if the message is
      * disabled.
      */
