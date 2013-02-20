@@ -29,11 +29,14 @@ class ScifiDisplayBase {
 
   public:
     static const int MAX_BOARDS = 4;
-    static const int RESPONSE_SIZE = 256;
+    static const int HELP_SIZE = 512;
+    static const int MAX_COMMAND_SIZE = 32;
+    static const int RESPONSE_SIZE = 64;
     static const unsigned int PROTOCOL_VERSION = 0x0001; // 0.1
 
     ScifiDisplayBoard* get_board(int board) const;
 
+    void get_help(char* help_out) const;
     bool process_command(const char* command, char* response, unsigned int current_millis);
 
     void update(unsigned int current_millis);

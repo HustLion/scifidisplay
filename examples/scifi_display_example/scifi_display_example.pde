@@ -46,15 +46,22 @@ void loop() {
   unsigned int current_millis = millis();
 
   if(Serial.available() > 0) {
-    char command[32];
+    char command[ScifiDisplayBase::MAX_COMMAND_SIZE];
     int len = Serial.readBytesUntil('\n', command, sizeof(command) - 1);
     if(len > 0) {
       command[len] = '\0';
       Serial.println(command);
 
-      char response[ScifiDisplayBase::RESPONSE_SIZE];
-      display.process_command(command, response, current_millis);
-      Serial.println(response);
+      if(command[0] == 'h' || command[0] == 'H') {
+        char help[ScifiDisplayBase::HELP_SIZE];
+        display.get_help(help);
+        Serial.println(help);
+      }
+      else {
+        char response[ScifiDisplayBase::RESPONSE_SIZE];
+        display.process_command(command, response, current_millis);
+        Serial.println(response);
+      }
       Serial.print(PROMPT);
     }
   }

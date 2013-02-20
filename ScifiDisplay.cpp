@@ -35,6 +35,17 @@ ScifiDisplayBoard* ScifiDisplayBase::get_board(int board) const {
   return boards_[board];
 }
 
+void ScifiDisplayBase::get_help(char* help_out) const {
+  snprintf(help_out, HELP_SIZE,
+"Commands:\n"
+"i[nfo] - print info\n"
+"b[rightness] BOARD 0-8 - set brightness (0 = off; 8 = max)\n"
+"m[essage] s[et] BOARD INDEX text - change message text\n"
+"BOARD is 1-%d, or a[ll]\n" // TODO: doesn't make sense with only 1.
+"INDEX is 1-8 and corresponds to a button\n"
+      , num_boards_);
+}
+
 static inline const char* next_word(const char* string) {
   while(*string && *string != ' ')
     ++string;
@@ -67,23 +78,11 @@ bool ScifiDisplayBase::process_command(const char* command, char* response, unsi
     ;
 
   switch(*argv[0]) {
-    case 'h': case 'H': // help
-      snprintf(response, RESPONSE_SIZE,
-"ScifiDisplay v%u.%u\n"
-"Commands:\n"
-"h[elp] - print this help\n"
-"i[nfo] - print info\n"
-"b[rightness] BOARD 0-8 - set brightness (0 = off; 8 = max)\n"
-"m[essage] s[et] BOARD INDEX text - change message text\n"
-"BOARD is 1-num attached boards, or a[ll]\n"
-"INDEX is 1-8 and corresponds to a button\n",
-(PROTOCOL_VERSION >> 8) & 0xff, PROTOCOL_VERSION & 0xff);
-      return true;
-
     case 'i': case 'I': // info
       snprintf(response, RESPONSE_SIZE,
-"num_boards: %d\n",
-num_boards_);
+"ScifiDisplay v%u.%u\n"
+"num_boards: %d\n"
+          , (PROTOCOL_VERSION >> 8) & 0xff, PROTOCOL_VERSION & 0xff, num_boards_);
       return true;
 
     case 'b': case 'B': // brightness
@@ -106,7 +105,7 @@ num_boards_);
       break;
 
     default:
-      snprintf(response, RESPONSE_SIZE, "Unknown command %c; see help",
+      snprintf(response, RESPONSE_SIZE, "Unknown command %c",
           (*argv[0] >= 0x20 && *argv[0] < 0x7f ? *argv[0] : ' '));
       return false;
   }
@@ -115,7 +114,7 @@ num_boards_);
   return true;
 
 invalid_args:
-  snprintf(response, RESPONSE_SIZE, "Invalid args for command %c; see help", *argv[0]);
+  snprintf(response, RESPONSE_SIZE, "Invalid args for command %c", *argv[0]);
   return false;
 }
 
