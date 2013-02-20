@@ -39,6 +39,21 @@ class ScifiDisplayBase {
     void update(unsigned int current_millis);
 
   private:
+    template <typename R, typename... Args>
+    R call_board(ScifiDisplayBoard* board, R (ScifiDisplayBoard::* method)(Args...), Args... args) {
+      return (board->*method)(args...);
+    }
+
+    template <typename R, typename... Args>
+    void each_board(int board, R (ScifiDisplayBoard::* method)(Args...), Args... args) {
+      if(board >= 0 && board < num_boards_)
+        call_board(boards_[board], method, args...);
+      else {
+        for(int i = 0; i < num_boards_; ++i)
+          call_board(boards_[i], method, args...);
+      }
+    }
+
     bool board_ok(int board) const;
     bool board_argv_ok(char board) const;
 

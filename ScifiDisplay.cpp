@@ -51,6 +51,10 @@ static inline bool is_board_all(char board) {
   return (board == 'a' || board == 'A');
 }
 
+static inline int board_as_int(char board) {
+  return (is_board_all(board) ? -1 : board - '1');
+}
+
 bool ScifiDisplayBase::process_command(const char* command, char* response, unsigned int current_millis) {
   static const int MAX_ARGS = 4;
   const char* argv[MAX_ARGS];
@@ -83,12 +87,7 @@ num_boards_);
       if(argc != 3 || !board_argv_ok(*argv[1]) || !in_range(*argv[2], '0', '8'))
         break;
       int brightness = *argv[2] - '0';
-      if(is_board_all(*argv[1])) {
-        for(int i = 0; i < num_boards_; ++i)
-          boards_[i]->set_brightness(brightness);
-      }
-      else
-        boards_[*argv[1] - '1']->set_brightness(brightness);
+      each_board(board_as_int(*argv[1]), &ScifiDisplayBoard::set_brightness, brightness);
       snprintf(response, RESPONSE_SIZE, "ok");
       return true;
     }
