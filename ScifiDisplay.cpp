@@ -56,7 +56,7 @@ static inline int board_as_int(char board) {
 }
 
 bool ScifiDisplayBase::process_command(const char* command, char* response, unsigned int current_millis) {
-  static const int MAX_ARGS = 4;
+  static const int MAX_ARGS = 5;
   const char* argv[MAX_ARGS];
   argv[0] = command;
   for(int i = 1; i < MAX_ARGS; ++i)
@@ -70,10 +70,13 @@ bool ScifiDisplayBase::process_command(const char* command, char* response, unsi
     case 'h': case 'H': // help
       snprintf(response, RESPONSE_SIZE,
 "ScifiDisplay v%u.%u\n"
-"Commands (BOARD is 1-num attached boards, or a[ll]):\n"
+"Commands:\n"
 "h[elp] - print this help\n"
 "i[nfo] - print info\n"
-"b[rightness] BOARD 0-8 - set brightness (0 = off; 8 = max)\n",
+"b[rightness] BOARD 0-8 - set brightness (0 = off; 8 = max)\n"
+"m[essage] s[et] BOARD INDEX text - change message text\n"
+"BOARD is 1-num attached boards, or a[ll]\n"
+"INDEX is 1-8 and corresponds to a button\n",
 (PROTOCOL_VERSION >> 8) & 0xff, PROTOCOL_VERSION & 0xff);
       return true;
 
@@ -83,14 +86,24 @@ bool ScifiDisplayBase::process_command(const char* command, char* response, unsi
 num_boards_);
       return true;
 
-    case 'b': case 'B': { // brightness
+    case 'b': case 'B': // brightness
       if(argc != 3 || !board_argv_ok(*argv[1]) || !in_range(*argv[2], '0', '8'))
-        break;
-      int brightness = *argv[2] - '0';
-      each_board(board_as_int(*argv[1]), &ScifiDisplayBoard::set_brightness, brightness);
-      snprintf(response, RESPONSE_SIZE, "ok");
-      return true;
-    }
+        goto invalid_args;
+      each_board(board_as_int(*argv[1]), &ScifiDisplayBoard::set_brightness, *argv[2] - '0');
+      break;
+
+    case 'm': case 'M': // message
+      switch(*argv[1]) {
+        case 's': case 'S': // set
+          if(argc != 5 || !board_argv_ok(*argv[2]) || !in_range(*argv[3], '1', '8'))
+            goto invalid_args;
+          each_board(board_as_int(*argv[2]), &ScifiDisplayBoard::set_message, *argv[3] - '1', argv[4]);
+          break;
+
+        default:
+          goto invalid_args;
+      }
+      break;
 
     default:
       snprintf(response, RESPONSE_SIZE, "Unknown command %c; see help",
@@ -98,7 +111,10 @@ num_boards_);
       return false;
   }
 
-  // Only get here if invalid args.
+  snprintf(response, RESPONSE_SIZE, "ok");
+  return true;
+
+invalid_args:
   snprintf(response, RESPONSE_SIZE, "Invalid args for command %c; see help", *argv[0]);
   return false;
 }
