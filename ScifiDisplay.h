@@ -29,7 +29,8 @@ class ScifiDisplayBase {
 
   public:
     static const int MAX_BOARDS = 4;
-    static const int COMMAND_RESPONSE_SIZE = 128;
+    static const int RESPONSE_SIZE = 256;
+    static const unsigned int PROTOCOL_VERSION = 0x0001; // 0.1
 
     ScifiDisplayBoard* get_board(int board) const;
 
@@ -39,6 +40,7 @@ class ScifiDisplayBase {
 
   private:
     bool board_ok(int board) const;
+    bool board_argv_ok(char board) const;
 
     int num_boards_;
     ScifiDisplayBoard* boards_[MAX_BOARDS];

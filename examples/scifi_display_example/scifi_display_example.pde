@@ -28,6 +28,8 @@ static const char* messages[NUM_BOARDS][ScifiDisplayBoard::NUM_DIGITS] = {
 
 ScifiDisplay<NUM_BOARDS> display(8, 7, 6, 5);
 
+static const char PROMPT[] = "ScifiDisplay> ";
+
 void setup() {
   Serial.begin(9600);
 
@@ -36,21 +38,24 @@ void setup() {
       display.get_board(i)->set_message(m, messages[i][m]);
     display.get_board(i)->blink_leds(false, (unsigned int)millis());
   }
+
+  Serial.print(PROMPT);
 }
 
 void loop() {
   unsigned int current_millis = millis();
 
   if(Serial.available() > 0) {
-    char command[64];
-    int len = Serial.readBytesUntil('\n', command, 63);
+    char command[32];
+    int len = Serial.readBytesUntil('\n', command, sizeof(command) - 1);
     if(len > 0) {
       command[len] = '\0';
-      char response[128];
-      if(!display.process_command(command, response, current_millis))
-        Serial.println("Error processing command");
-      else
-        Serial.print(response);
+      Serial.println(command);
+
+      char response[ScifiDisplayBase::RESPONSE_SIZE];
+      display.process_command(command, response, current_millis);
+      Serial.println(response);
+      Serial.print(PROMPT);
     }
   }
 

@@ -43,19 +43,29 @@ static inline const char* next_word(const char* string) {
   return string;
 }
 
-bool ScifiDisplayBase::process_command(const char* command, char* response, unsigned int current_millis) {
-  static const unsigned int PROTOCOL_VERSION = 0x0001; // 0.1
+static inline bool in_range(char c, char min, char max) {
+  return (c >= min && c <= max);
+}
 
+static inline bool is_board_all(char board) {
+  return (board == 'a' || board == 'A');
+}
+
+bool ScifiDisplayBase::process_command(const char* command, char* response, unsigned int current_millis) {
   static const int MAX_ARGS = 4;
   const char* argv[MAX_ARGS];
   argv[0] = command;
   for(int i = 1; i < MAX_ARGS; ++i)
     argv[i] = next_word(argv[i - 1]);
 
+  int argc;
+  for(argc = 0; argc < MAX_ARGS && *argv[argc]; ++argc)
+    ;
+
   switch(*argv[0]) {
     case 'h': case 'H': // help
-      snprintf(response, COMMAND_RESPONSE_SIZE,
-"ScifiDisplay v%u.%u\n" // printf args 1 and 2
+      snprintf(response, RESPONSE_SIZE,
+"ScifiDisplay v%u.%u\n"
 "Commands (BOARD is 1-num attached boards, or a[ll]):\n"
 "h[elp] - print this help\n"
 "i[nfo] - print info\n"
@@ -64,25 +74,33 @@ bool ScifiDisplayBase::process_command(const char* command, char* response, unsi
       return true;
 
     case 'i': case 'I': // info
-      snprintf(response, COMMAND_RESPONSE_SIZE,
+      snprintf(response, RESPONSE_SIZE,
 "num_boards: %d\n",
-num_boards_
-);
+num_boards_);
       return true;
 
-    case 'b': case 'B': // brightness
-      int board = atoi(argv[1]);
-      int brightness = atoi(argv[2]);
-      if(*argv[1] == 'a' || *argv[1] == 'A') {
+    case 'b': case 'B': { // brightness
+      if(argc != 3 || !board_argv_ok(*argv[1]) || !in_range(*argv[2], '0', '8'))
+        break;
+      int brightness = *argv[2] - '0';
+      if(is_board_all(*argv[1])) {
         for(int i = 0; i < num_boards_; ++i)
           boards_[i]->set_brightness(brightness);
       }
       else
-        boards_[board]->set_brightness(brightness);
-      snprintf(response, COMMAND_RESPONSE_SIZE, "ok");
+        boards_[*argv[1] - '1']->set_brightness(brightness);
+      snprintf(response, RESPONSE_SIZE, "ok");
       return true;
+    }
+
+    default:
+      snprintf(response, RESPONSE_SIZE, "Unknown command %c; see help",
+          (*argv[0] >= 0x20 && *argv[0] < 0x7f ? *argv[0] : ' '));
+      return false;
   }
 
+  // Only get here if invalid args.
+  snprintf(response, RESPONSE_SIZE, "Invalid args for command %c; see help", *argv[0]);
   return false;
 }
 
@@ -105,4 +123,8 @@ void ScifiDisplayBase::update(unsigned int current_millis) {
 
 bool ScifiDisplayBase::board_ok(int board) const {
   return (board >= 0 && board < num_boards_);
+}
+
+bool ScifiDisplayBase::board_argv_ok(char board) const {
+  return (is_board_all(board) || in_range(board, '1', '0' + num_boards_));
 }
