@@ -75,9 +75,10 @@ class ScifiDisplayBoard {
 
     /**
      * Return whether the LEDs are blinking or flashing, false if disabled.  If
-     * blinking_out is non-NULL, fill it with true if blinking, else false.
+     * blinking_out is non-NULL, fill it with true if blinking, else false.  If
+     * green_out is non-NULL, fill it with true if LEDs on green, false if red.
      */
-    bool get_leds_state(bool* blinking_out) const;
+    bool get_leds_state(bool* blinking_out, bool* green_out) const;
 
     /**
      * Randomly blink the LEDs, red if green is false.  current_millis is the

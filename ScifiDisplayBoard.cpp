@@ -91,9 +91,11 @@ void ScifiDisplayBoard::disable_message() {
   board_.clearDisplay();
 }
 
-bool ScifiDisplayBoard::get_leds_state(bool* blinking_out) const {
+bool ScifiDisplayBoard::get_leds_state(bool* blinking_out, bool* green_out) const {
   if(blinking_out)
     *blinking_out = (leds_state_ == 2);
+  if(green_out)
+    *green_out = (leds_color_ == COLOR_GREEN);
   return (leds_state_ >= 0);
 }
 
