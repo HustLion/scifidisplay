@@ -150,7 +150,7 @@ unsigned int ScifiDisplayBoard::update(unsigned int current_millis) {
 
     if(leds_state_ == 2) {
       int flip = (int)(random() & (NUM_DIGITS - 1));
-      leds_value_ ^= (1 << (unsigned int)flip);
+      leds_value_ ^= (1u << flip);
 
       update_led(flip);
     }
@@ -169,7 +169,7 @@ unsigned int ScifiDisplayBoard::update(unsigned int current_millis) {
 
 void ScifiDisplayBoard::update_led(int index) {
   board_.setLED(
-    ((leds_value_ & (1 << (unsigned int)index)) ? (byte)leds_color_ : 0),
+    ((leds_value_ & (1u << index)) ? (byte)leds_color_ : 0),
     (byte)index
   );
 }
