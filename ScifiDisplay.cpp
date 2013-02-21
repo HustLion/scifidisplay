@@ -105,6 +105,31 @@ bool ScifiDisplayBase::process_command(const char* command, char* response, unsi
       }
       break;
 
+    case 'l': case 'L': // leds
+      switch(*argv[1]) {
+        case 'b': case 'B': // blink
+          if(argc != 4 || !board_argv_ok(*argv[2]) || (*argv[3] != 'r' && *argv[3] != 'R' && *argv[3] != 'g' && *argv[3] != 'G'))
+            goto invalid_args;
+          each_board(board_as_int(*argv[2]), &ScifiDisplayBoard::blink_leds, (*argv[3] == 'g' || *argv[3] == 'G'), current_millis);
+          break;
+
+        case 'f': case 'F': // flash
+          if(argc != 4 || !board_argv_ok(*argv[2]) || (*argv[3] != 'r' && *argv[3] != 'R' && *argv[3] != 'g' && *argv[3] != 'G'))
+            goto invalid_args;
+          each_board(board_as_int(*argv[2]), &ScifiDisplayBoard::flash_leds, (*argv[3] == 'g' || *argv[3] == 'G'), current_millis);
+          break;
+
+        case 'd': case 'D': // disable
+          if(argc != 3 || !board_argv_ok(*argv[2]))
+            goto invalid_args;
+          each_board(board_as_int(*argv[2]), &ScifiDisplayBoard::disable_leds);
+          break;
+
+        default:
+          goto invalid_args;
+      }
+      break;
+
     default:
       snprintf(response, RESPONSE_SIZE, "Unknown command %c",
           (*argv[0] >= 0x20 && *argv[0] < 0x7f ? *argv[0] : ' '));

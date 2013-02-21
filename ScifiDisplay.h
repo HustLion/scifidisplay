@@ -42,7 +42,10 @@ class ScifiDisplayBase {
 "b[rightness] BOARD 0-8 - set brightness (0 = off; 8 = max)\n"
 "m[essage] s[et] BOARD INDEX text - change message text\n"
 "m[essage] f[lash] BOARD INDEX - flash message on display\n"
-"m[essage] d[isable] BOARD - stop flashing\n"
+"m[essage] d[isable] BOARD - stop flashing message\n"
+"l[eds] b[link] BOARD r[ed]|g[reen] - randomly blink LEDs\n"
+"l[eds] f[lash] BOARD r[ed]|g[reen] - flash LEDs\n"
+"l[eds] d[isable] BOARD - stop blinking/flashing LEDs\n"
 "BOARD is 1-num connected boards, or a[ll]\n"
 "INDEX is 1-8 and corresponds to a button\n"
           ;
