@@ -88,6 +88,12 @@ bool ScifiDisplayBase::process_command(const char* command, char* response, unsi
           each_board(board_as_int(*argv[2]), &ScifiDisplayBoard::set_message, *argv[3] - '1', argv[4]);
           break;
 
+        case 'f': case 'F': // flash
+          if(argc != 4 || !board_argv_ok(*argv[2]) || !in_range(*argv[3], '1', '8'))
+            goto invalid_args;
+          each_board(board_as_int(*argv[2]), &ScifiDisplayBoard::flash_message, *argv[3] - '1', current_millis);
+          break;
+
         default:
           goto invalid_args;
       }
