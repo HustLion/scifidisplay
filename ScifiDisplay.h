@@ -21,6 +21,10 @@
 
 #include <ScifiDisplayBoard.h>
 
+/**
+ * A collection of ScifiDisplayBoards that you can send commands to.  This is
+ * the base class; to instantiate, use ScifiDisplay<>.
+ */
 class ScifiDisplayBase {
   protected:
     ScifiDisplayBase(int num_boards, ScifiDisplayBoard* board0,
@@ -28,13 +32,29 @@ class ScifiDisplayBase {
         ScifiDisplayBoard* board3);
 
   public:
+    /// Maximum number of boards possible to chain in one ScifiDisplay.
     static const int MAX_BOARDS = 4;
+
+    /// Maximum size of a valid command string.
     static const int MAX_COMMAND_SIZE = 32;
+
+    /// Necessary size of a command response string.
     static const int RESPONSE_SIZE = 64;
+
+    /// Version of the command protocol.
     static const unsigned int PROTOCOL_VERSION = 0x0001; // 0.1
 
+    /**
+     * Return a pointer to the given index of ScifiDisplayBoard, or NULL if
+     * invalid index.
+     */
     ScifiDisplayBoard* get_board(int board) const;
 
+    /**
+     * Return a string explaining the commands accepted in the protocol.  This
+     * is implemented in the header so if your code doesn't use it, it won't
+     * get compiled in, saving space.
+     */
     const char* get_help() const {
       return
 "Commands:\n"
@@ -51,8 +71,18 @@ class ScifiDisplayBase {
           ;
     }
 
+    /**
+     * Run the command string.  See get_help() for what constitutes a command
+     * string.  Fill response (must be at least RESPONSE_SIZE bytes) with the
+     * response string.  current_millis is the current value of millis()
+     * typecast to unsigned int.  Return whether the command succeeded.
+     */
     bool process_command(const char* command, char* response, unsigned int current_millis);
 
+    /**
+     * Update the state of all boards.  Should be called often.  current_millis
+     * is the current value of millis() typecast to unsigned int.
+     */
     void update(unsigned int current_millis);
 
   private:
@@ -78,6 +108,10 @@ class ScifiDisplayBase {
     ScifiDisplayBoard* boards_[MAX_BOARDS];
 };
 
+/**
+ * An instantiable collection of ScifiDisplayBoards that you can send commands
+ * to.  Specify the number of boards in the template parameter.
+ */
 template<int NUM_BOARDS>
 class ScifiDisplay;
 
