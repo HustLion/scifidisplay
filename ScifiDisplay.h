@@ -29,14 +29,24 @@ class ScifiDisplayBase {
 
   public:
     static const int MAX_BOARDS = 4;
-    static const int HELP_SIZE = 512;
     static const int MAX_COMMAND_SIZE = 32;
     static const int RESPONSE_SIZE = 64;
     static const unsigned int PROTOCOL_VERSION = 0x0001; // 0.1
 
     ScifiDisplayBoard* get_board(int board) const;
 
-    void get_help(char* help_out) const;
+    const char* get_help() const {
+      return
+"Commands:\n"
+"i[nfo] - print info\n"
+"b[rightness] BOARD 0-8 - set brightness (0 = off; 8 = max)\n"
+"m[essage] s[et] BOARD INDEX text - change message text\n"
+"m[essage] f[lash] BOARD INDEX - flash message on display\n"
+"BOARD is 1-num connected boards, or a[ll]\n"
+"INDEX is 1-8 and corresponds to a button\n"
+          ;
+    }
+
     bool process_command(const char* command, char* response, unsigned int current_millis);
 
     void update(unsigned int current_millis);

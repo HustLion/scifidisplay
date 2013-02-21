@@ -52,11 +52,8 @@ void loop() {
       command[len] = '\0';
       Serial.println(command);
 
-      if(command[0] == 'h' || command[0] == 'H') {
-        char help[ScifiDisplayBase::HELP_SIZE];
-        display.get_help(help);
-        Serial.println(help);
-      }
+      if(command[0] == 'h' || command[0] == 'H')
+        Serial.println(display.get_help());
       else {
         char response[ScifiDisplayBase::RESPONSE_SIZE];
         display.process_command(command, response, current_millis);

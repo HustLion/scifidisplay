@@ -35,17 +35,6 @@ ScifiDisplayBoard* ScifiDisplayBase::get_board(int board) const {
   return boards_[board];
 }
 
-void ScifiDisplayBase::get_help(char* help_out) const {
-  snprintf(help_out, HELP_SIZE,
-"Commands:\n"
-"i[nfo] - print info\n"
-"b[rightness] BOARD 0-8 - set brightness (0 = off; 8 = max)\n"
-"m[essage] s[et] BOARD INDEX text - change message text\n"
-"BOARD is 1-%d, or a[ll]\n" // TODO: doesn't make sense with only 1.
-"INDEX is 1-8 and corresponds to a button\n"
-      , num_boards_);
-}
-
 static inline const char* next_word(const char* string) {
   while(*string && *string != ' ')
     ++string;
