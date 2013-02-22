@@ -1,0 +1,26 @@
+ScifiDisplay	KEYWORD1
+ScifiDisplayBase	KEYWORD1
+ScifiDisplayBoard	KEYWORD1
+
+get_board	KEYWORD2
+get_help	KEYWORD2
+process_command	KEYWORD2
+update	KEYWORD2
+
+set_brightness	KEYWORD2
+set_message	KEYWORD2
+get_message	KEYWORD2
+get_message_index	KEYWORD2
+flash_message	KEYWORD2
+disable_message	KEYWORD2
+get_leds_state	KEYWORD2
+blink_leds	KEYWORD2
+flash_leds	KEYWORD2
+disable_leds	KEYWORD2
+
+MAX_BOARDS	LITERAL1
+MAX_COMMAND_SIZE	LITERAL1
+RESPONSE_SIZE	LITERAL1
+PROTOCOL_VERSION	LITERAL1
+
+NUM_DIGITS	LITERAL1
