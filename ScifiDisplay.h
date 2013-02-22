@@ -86,6 +86,8 @@ class ScifiDisplayBase {
     void update(unsigned int current_millis);
 
   private:
+    // Apologies for this template ugliness.  It makes the command parser much
+    // easier to write.
     template <typename R, typename... Args>
     R call_board(ScifiDisplayBoard* board, R (ScifiDisplayBoard::* method)(Args...), Args... args) {
       return (board->*method)(args...);
@@ -110,11 +112,15 @@ class ScifiDisplayBase {
 
 /**
  * An instantiable collection of ScifiDisplayBoards that you can send commands
- * to.  Specify the number of boards in the template parameter.
+ * to.  Specify the number of boards (up to ScifiDisplayBase::MAX_BOARDS, 4) in
+ * the template parameter.
  */
 template<int NUM_BOARDS>
 class ScifiDisplay;
 
+/**
+ * A ScifiDisplay<> of 1 TM1638 board connected to the Arduino.
+ */
 template<>
 class ScifiDisplay<1> : public ScifiDisplayBase {
   public:
@@ -127,6 +133,9 @@ class ScifiDisplay<1> : public ScifiDisplayBase {
     ScifiDisplayBoard board0;
 };
 
+/**
+ * A ScifiDisplay<> of 2 chained TM1638 boards connected to the Arduino.
+ */
 template<>
 class ScifiDisplay<2> : public ScifiDisplayBase {
   public:
@@ -141,6 +150,9 @@ class ScifiDisplay<2> : public ScifiDisplayBase {
     ScifiDisplayBoard board1;
 };
 
+/**
+ * A ScifiDisplay<> of 3 chained TM1638 boards connected to the Arduino.
+ */
 template<>
 class ScifiDisplay<3> : public ScifiDisplayBase {
   public:
@@ -158,6 +170,9 @@ class ScifiDisplay<3> : public ScifiDisplayBase {
     ScifiDisplayBoard board2;
 };
 
+/**
+ * A ScifiDisplay<> of 4 chained TM1638 boards connected to the Arduino.
+ */
 template<>
 class ScifiDisplay<4> : public ScifiDisplayBase {
   public:

@@ -18,7 +18,8 @@
 
 #include "Arduino.h"
 #include "ScifiDisplayBoard.h"
-#include <stdlib.h> // For random().
+// For random(), which is what Arduino's random(int) and random(int, int) call.
+#include <stdlib.h>
 
 // These would be the TM1638_COLOR_* constants in TM1638.h, but they're defined
 // backwards there so I use the correct numerical values here instead.
