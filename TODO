@@ -1,0 +1,9 @@
+* Allow setting the duration of each flash, and time between LED blinks, etc.
+* Allow setting the state of the LEDs all together, without flashing/blinking
+* Allow setting the display on a message without flashing
+* Scrolling messages
+* Maybe a "pulse" mode that changes brightness instead of turning things on/off
+  abruptly
+* Add accessors to the command interface, maybe just through the info command
+* Add a "terminal" program that just lets you run an interactive serial session
+  to the command interface

@@ -1,5 +1,6 @@
 /*
   ScifiDisplay - Arduino library for sci-fi style blinking TM1638 panels
+                 <https://github.com/chazomaticus/scifidisplay>
   Copyright 2013 Charles Lindsay <chaz@chazomatic.us>
 
   ScifiDisplay is free software: you can redistribute it and/or modify it under
