@@ -23,7 +23,7 @@ Command Interface
 
 Commands are passed as strings to `ScifiDisplay<>::process_command()`.
 
-You can get concise command interface help at run-time with
+You can get concise help on available commands at run-time with
 `ScifiDisplay<>::get_help()`.
 
 See
@@ -36,15 +36,16 @@ Example
 
 See the example program at
 [scifi_display_example.pde](https://raw.github.com/chazomaticus/scifidisplay/master/examples/scifi_display_example/scifi_display_example.pde)
-for how to hook the command interface up to the serial port (and even add the
+for how to hook the command interface up to the serial port (and even add a
 help command so you don't have to close the serial monitor to see the docs).
 
-To see it in action, hook up two boards as shown in the following picture:
+To see it in action, chain two boards together.  The example program's pinout
+is shown in the following picture:
 
-TODO: pic of the example circuit
+![Example Circuit](https://raw.github.com/chazomaticus/scifidisplay/master/example-circuit.gif)
 
 Fire up the example program in the Arduino IDE, upload it to the device, and
-then break out the serial console (make sure the dropdowns are set to Newline
+then bust open the serial console (make sure the dropdowns are set to Newline
 and 9600 baud).
 
 Try some of these commands:
@@ -54,7 +55,7 @@ Try some of these commands:
 * `leds flash 1 green` (or `l f 1 g`) - flash the green LEDs on board 1
 * `leds blink 2 red` (or `l b 2 r`) - set board 2's LEDs to blink red
 * `message set 1 8 run away` (or `m s 1 8 run away`) - set board 1's message
-  slot 8 to "run away" (press button 8 or execute the next command to flash it)
+  slot 8 to `run away` (press button 8 or execute the next command to flash it)
 * `message flash 1 8` (etc.) - flash the message in slot 8 on board 1 (press
   button 8 again to turn off the message flashing)
 
