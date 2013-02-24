@@ -42,7 +42,7 @@ help command so you don't have to close the serial monitor to see the docs).
 To see it in action, chain two boards together.  The example program's pinout
 is shown in the following picture:
 
-![Example Circuit](https://raw.github.com/chazomaticus/scifidisplay/master/example-circuit.gif)
+![Example Circuit](https://raw.github.com/chazomaticus/scifidisplay/master/example-circuit.jpg)
 
 Fire up the example program in the Arduino IDE, upload it to the device, and
 then bust open the serial console (make sure the dropdowns are set to Newline
