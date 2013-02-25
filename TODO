@@ -6,4 +6,4 @@
   abruptly
 * Add accessors to the command interface, maybe just through the info command
 * Add a "terminal" program that just lets you run an interactive serial session
-  to the command interface
+  to the command interface (see <http://shallowsky.com/blog/2011/Oct/16/>)
